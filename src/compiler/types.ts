@@ -4843,6 +4843,7 @@ namespace ts {
         resolvedJSDocType?: Type;           // Resolved type of a JSDoc type reference
         switchTypes?: Type[];               // Cached array of switch case expression types
         jsxNamespace?: Symbol | false;      // Resolved jsx namespace symbol for this node
+        jsxImplicitImportContainer?: Symbol | false; // Resolved module symbol the implicit jsx import of this file should refer to
         contextFreeType?: Type;             // Cached context-free type used by the first pass of inference; used when a function's return is partially contextually sensitive
         deferredNodes?: ESMap<NodeId, Node>; // Set of nodes whose checking has been deferred
         capturedBlockScopeBindings?: Symbol[]; // Block-scoped bindings captured beneath this part of an IterationStatement
@@ -5531,17 +5532,17 @@ namespace ts {
 
     /**
      * Ternary values are defined such that
-     * x & y is False if either x or y is False.
-     * x & y is Maybe if either x or y is Maybe, but neither x or y is False.
-     * x & y is True if both x and y are True.
-     * x | y is False if both x and y are False.
-     * x | y is Maybe if either x or y is Maybe, but neither x or y is True.
-     * x | y is True if either x or y is True.
+     * x & y picks the lesser in the order False < Unknown < Maybe < True, and
+     * x | y picks the greater in the order False < Unknown < Maybe < True.
+     * Generally, Ternary.Maybe is used as the result of a relation that depends on itself, and
+     * Ternary.Unknown is used as the result of a variance check that depends on itself. We make
+     * a distinction because we don't want to cache circular variance check results.
      */
     /* @internal */
     export const enum Ternary {
         False = 0,
-        Maybe = 1,
+        Unknown = 1,
+        Maybe = 3,
         True = -1
     }
 

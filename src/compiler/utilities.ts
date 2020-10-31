@@ -3849,8 +3849,10 @@ namespace ts {
 
     const indentStrings: string[] = ["", "    "];
     export function getIndentString(level: number) {
-        if (indentStrings[level] === undefined) {
-            indentStrings[level] = getIndentString(level - 1) + indentStrings[1];
+        // prepopulate cache
+        const singleLevel = indentStrings[1];
+        for (let current = indentStrings.length; current <= level; current++) {
+            indentStrings.push(indentStrings[current - 1] + singleLevel);
         }
         return indentStrings[level];
     }
@@ -6007,8 +6009,8 @@ namespace ts {
         return jsx === JsxEmit.React || jsx === JsxEmit.ReactJSX || jsx === JsxEmit.ReactJSXDev;
     }
 
-    export function getJSXImplicitImportBase(compilerOptions: CompilerOptions, file: SourceFile): string | undefined {
-        const jsxImportSourcePragmas = file.pragmas.get("jsximportsource");
+    export function getJSXImplicitImportBase(compilerOptions: CompilerOptions, file?: SourceFile): string | undefined {
+        const jsxImportSourcePragmas = file?.pragmas.get("jsximportsource");
         const jsxImportSourcePragma = isArray(jsxImportSourcePragmas) ? jsxImportSourcePragmas[0] : jsxImportSourcePragmas;
         return compilerOptions.jsx === JsxEmit.ReactJSX ||
             compilerOptions.jsx === JsxEmit.ReactJSXDev ||
@@ -6016,6 +6018,10 @@ namespace ts {
             jsxImportSourcePragma ?
                 jsxImportSourcePragma?.arguments.factory || compilerOptions.jsxImportSource || "react" :
                 undefined;
+    }
+
+    export function getJSXRuntimeImport(base: string | undefined, options: CompilerOptions) {
+        return base ? `${base}/${options.jsx === JsxEmit.ReactJSXDev ? "jsx-dev-runtime" : "jsx-runtime"}` : undefined;
     }
 
     export function hasZeroOrOneAsteriskCharacter(str: string): boolean {

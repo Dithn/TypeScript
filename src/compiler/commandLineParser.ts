@@ -382,6 +382,7 @@ namespace ts {
             type: jsxOptionMap,
             affectsSourceFile: true,
             affectsEmit: true,
+            affectsModuleResolution: true,
             paramType: Diagnostics.KIND,
             showInSimplifiedHelpView: true,
             category: Diagnostics.Basic_Options,
@@ -802,6 +803,9 @@ namespace ts {
         {
             name: "jsxImportSource",
             type: "string",
+            affectsSemanticDiagnostics: true,
+            affectsEmit: true,
+            affectsModuleResolution: true,
             category: Diagnostics.Advanced_Options,
             description: Diagnostics.Specify_the_module_specifier_to_be_used_to_import_the_jsx_and_jsxs_factory_functions_from_eg_react
         },
@@ -1578,7 +1582,7 @@ namespace ts {
      */
     export function readJsonConfigFile(fileName: string, readFile: (path: string) => string | undefined): TsConfigSourceFile {
         const textOrDiagnostic = tryReadFile(fileName, readFile);
-        return isString(textOrDiagnostic) ? parseJsonText(fileName, textOrDiagnostic) : <TsConfigSourceFile>{ parseDiagnostics: [textOrDiagnostic] };
+        return isString(textOrDiagnostic) ? parseJsonText(fileName, textOrDiagnostic) : <TsConfigSourceFile>{ fileName, parseDiagnostics: [textOrDiagnostic] };
     }
 
     /*@internal*/

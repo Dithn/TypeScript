@@ -1004,7 +1004,7 @@
         "category": "Error",
         "code": 1342
     },
-    "The 'import.meta' meta-property is only allowed when the '--module' option is 'esnext' or 'system'.": {
+    "The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'esnext', or 'system'.": {
         "category": "Error",
         "code": 1343
     },
@@ -4718,6 +4718,10 @@
         "category": "Suggestion",
         "code": 6385,
         "reportsDeprecated": true
+    },
+    "Performance timings for '--diagnostics' or '--extendedDiagnostics' are not available in this session. A native implementation of the Web Performance API could not be found.": {
+        "category": "Message",
+        "code": 6386
     },
 
     "The expected type comes from property '{0}' which is declared here on type '{1}'": {
